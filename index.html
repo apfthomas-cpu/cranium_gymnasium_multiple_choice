@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Assessment</title>
 
+<!-- Modern clean font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-    /* Apply Arial to ALL text */
     * {
-        font-family: Arial, sans-serif;
+        font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
     }
 
     body {
@@ -31,13 +34,21 @@
         width: 60%;
         max-width: 800px;
         text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        to { opacity: 1; transform: translateY(0); }
     }
 
     #timer {
-        font-size: 24px;
+        font-size: 26px;
         color: darkred;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
     }
 
     h1 {
@@ -46,32 +57,64 @@
         color: #2d2d2d;
     }
 
-    .option {
-        font-size: 20px;
-        margin: 15px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        justify-content: center;
-        color: #333;
+    /* ----------------------------- */
+    /* Updated Answer Buttons        */
+    /* ----------------------------- */
+    .optionBtn {
+        width: 200px;
+        padding: 15px;
+        margin: 10px auto;
+        font-size: 22px;
+        background: white;
+        color: #2d2d2d;
+
+        /* Removed black outline */
+        border: none;
+
+        /* Soft UI shadow instead */
+        box-shadow: 0 0 6px rgba(0,0,0,0.15);
+
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.25s ease;
+        display: block;
     }
 
-    button {
-        padding: 15px 30px;
-        font-size: 20px;
+    .optionBtn:hover {
+        transform: scale(1.05);
+        background: #f2f2f2;
+    }
+
+    .optionBtn.selected {
+        background: #2d2d2d;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    #submitBtn {
+        padding: 15px 40px;
+        font-size: 22px;
         background-color: #2d2d2d;
         color: white;
         border: none;
         border-radius: 10px;
         cursor: pointer;
-        margin-top: 20px;
+        margin-top: 25px;
+        transition: 0.3s ease;
+        opacity: 0.6;
+        pointer-events: none;
     }
 
-    button:hover {
+    #submitBtn.enabled {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    #submitBtn:hover {
         background-color: #444;
     }
 
-    /* TIME UP overlay */
+    /* TIME UP OVERLAY */
     #timeUpOverlay {
         position: fixed;
         top: 0;
@@ -97,6 +140,13 @@
         font-size: 60px;
         color: red;
         margin: 0;
+        animation: pulse 0.8s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
 </style>
 </head>
@@ -106,6 +156,8 @@
     <div id="timer"></div>
     <h1 id="questionText"></h1>
     <div id="options"></div>
+
+    <button id="submitBtn">Submit</button>
 </div>
 
 <!-- TIME UP OVERLAY -->
@@ -116,47 +168,50 @@
 </div>
 
 <script>
-    // Updated Questions
     const sectionOneQuestions = [
         { text: "William Shakespeare was half English, half Scottish and half Italian.", options: ["True", "False"] },
-        { text: "Humans and giraffes have the same number of neck vertebrae.", options: ["True", "False"] },
+        { text: "1kg of feathers weighs the same amount as 1kg of granite.", options: ["True", "False"] },
         { text: "The Great Wall of China is visible from space with the naked eye.", options: ["True", "False"] },
         { text: "The highest capital city in Europe is Madrid.", options: ["True", "False"] },
         { text: "Light travels faster than sound.", options: ["True", "False"] },
+        { text: "You are not a pupil at St Philip's.", options: ["True", "False"] },
         { text: "The human body has four lungs.", options: ["True", "False"] }
     ];
 
-    // Correct answers (in order)
-    const correctAnswers = ["False", "True", "False", "False", "True", "False"];
+    const correctAnswers = ["False", "True", "False", "True", "True", "False", "False"];
 
-    let questions = sectionOneQuestions;
     let index = 0;
+    let selectedAnswer = null;
 
-    // Start time: 7 seconds
-    let nextTimeLimit = 7;
-
+    // Adaptive timer begins at 10 seconds
+    let nextTimeLimit = 10;
     let timeLeft;
     let countdown;
 
     function loadQuestion() {
-        const q = questions[index];
+        const q = sectionOneQuestions[index];
         document.getElementById("questionText").textContent = q.text;
 
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = "";
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        selectedAnswer = null;
+        document.getElementById("submitBtn").classList.remove("enabled");
 
         q.options.forEach(option => {
-            const label = document.createElement("label");
-            label.className = "option";
+            const btn = document.createElement("button");
+            btn.className = "optionBtn";
+            btn.textContent = option;
 
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "answer";
-            input.onclick = () => checkAnswer(option);
+            btn.onclick = () => {
+                document.querySelectorAll(".optionBtn").forEach(b => b.classList.remove("selected"));
+                btn.classList.add("selected");
+                selectedAnswer = option;
 
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(option));
-            optionsContainer.appendChild(label);
+                document.getElementById("submitBtn").classList.add("enabled");
+            };
+
+            optionsDiv.appendChild(btn);
         });
 
         startTimer();
@@ -164,18 +219,23 @@
 
     function startTimer() {
         timeLeft = nextTimeLimit;
-        document.getElementById("timer").textContent = `Time Left: ${timeLeft}s`;
+        updateTimerDisplay();
 
         clearInterval(countdown);
         countdown = setInterval(() => {
             timeLeft--;
-            document.getElementById("timer").textContent = `Time Left: ${timeLeft}s`;
+            updateTimerDisplay();
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 showTimeUp();
             }
         }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const timer = document.getElementById("timer");
+        timer.textContent = `Time Left: ${timeLeft}s`;
     }
 
     function showTimeUp() {
@@ -185,40 +245,29 @@
         setTimeout(() => {
             overlay.style.display = "none";
             nextQuestion();
-        }, 1000);
+        }, 900);
     }
 
-    function checkAnswer(selected) {
-        const correct = correctAnswers[index];
+    document.getElementById("submitBtn").onclick = () => {
+        if (!selectedAnswer) return;
 
-        if (selected === correct) {
-            // Reduce next question time by 1 second, cannot go below 1
-            nextTimeLimit = Math.max(1, nextTimeLimit - 1);
+        clearInterval(countdown);
+
+        if (selectedAnswer === correctAnswers[index]) {
+            nextTimeLimit = Math.max(1, nextTimeLimit - 2);
         }
 
         nextQuestion();
-    }
+    };
 
     function nextQuestion() {
-        clearInterval(countdown);
         index++;
 
-        if (index < questions.length) {
+        if (index < sectionOneQuestions.length) {
             loadQuestion();
         } else {
-            finish();
+            window.location.href = "https://www.stpschool.co.uk";
         }
-    }
-
-    function finish() {
-        document.querySelector(".container").innerHTML = `
-            <h1 style="font-size: 36px; margin-bottom: 20px;">Section 1 Complete</h1>
-            <button onclick="goToSectionTwo()">Next Section</button>
-        `;
-    }
-
-    function goToSectionTwo() {
-        window.location.href = "section2.html";
     }
 
     loadQuestion();
