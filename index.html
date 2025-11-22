@@ -4,92 +4,88 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Assessment</title>
-
-<!-- Modern clean font -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-    * {
-        font-family: 'Poppins', sans-serif;
-        box-sizing: border-box;
-    }
+    * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
 
     body {
         margin: 0;
         background: url('Background.jpg') no-repeat center center fixed;
         background-size: cover;
         height: 100vh;
+    }
+
+    /* ---------------- SPLASH SCREEN ---------------- */
+    #splashScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('Background.jpg') no-repeat center center fixed;
+        background-size: cover;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
+        z-index: 9999;
     }
 
+    .splashBox {
+        background: rgba(255,255,255,0.5);
+        backdrop-filter: blur(8px);
+        padding: 40px 60px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+
+    #startBtn {
+        margin-top: 25px;
+        padding: 15px 35px;
+        font-size: 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 12px;
+        background: rgba(0,0,0,0.45);
+        color: white;
+        transition: 0.3s ease;
+    }
+
+    #startBtn:hover { background: rgba(0,0,0,0.7); }
+
+    /* ---------------- QUIZ CONTAINER ---------------- */
     .container {
-        background: rgba(255, 255, 255, 0.6);
+        display: none;
+        background: rgba(255,255,255,0.6);
         backdrop-filter: blur(8px);
         padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         width: 60%;
         max-width: 800px;
+        margin: 120px auto;
         text-align: center;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeIn 0.6s ease forwards;
     }
 
-    @keyframes fadeIn {
-        to { opacity: 1; transform: translateY(0); }
-    }
+    #timer { font-size: 26px; margin-bottom: 25px; font-weight: bold; color: darkred; }
 
-    #timer {
-        font-size: 26px;
-        color: darkred;
-        font-weight: bold;
-        margin-bottom: 25px;
-        transition: all 0.3s ease;
-    }
-
-    h1 {
-        font-size: 28px;
-        margin-bottom: 30px;
-        color: #2d2d2d;
-    }
-
-    /* ----------------------------- */
-    /* Updated Answer Buttons        */
-    /* ----------------------------- */
     .optionBtn {
         width: 200px;
         padding: 15px;
         margin: 10px auto;
         font-size: 22px;
         background: white;
-        color: #2d2d2d;
-
-        /* Removed black outline */
         border: none;
-
-        /* Soft UI shadow instead */
         box-shadow: 0 0 6px rgba(0,0,0,0.15);
-
         border-radius: 12px;
         cursor: pointer;
         transition: 0.25s ease;
         display: block;
     }
 
-    .optionBtn:hover {
-        transform: scale(1.05);
-        background: #f2f2f2;
-    }
-
-    .optionBtn.selected {
-        background: #2d2d2d;
-        color: white;
-        transform: scale(1.05);
-    }
+    .optionBtn.selected { background: #2d2d2d; color: white; transform: scale(1.05); }
 
     #submitBtn {
         padding: 15px 40px;
@@ -100,71 +96,32 @@
         border-radius: 10px;
         cursor: pointer;
         margin-top: 25px;
-        transition: 0.3s ease;
         opacity: 0.6;
         pointer-events: none;
+        transition: 0.3s ease;
     }
 
-    #submitBtn.enabled {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    #submitBtn:hover {
-        background-color: #444;
-    }
-
-    /* TIME UP OVERLAY */
-    #timeUpOverlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    #timeUpBox {
-        background: rgba(255, 255, 255, 0.8);
-        padding: 50px 80px;
-        border-radius: 20px;
-        text-align: center;
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
-
-    #timeUpBox h1 {
-        font-size: 60px;
-        color: red;
-        margin: 0;
-        animation: pulse 0.8s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
+    #submitBtn.enabled { opacity: 1; pointer-events: auto; }
 </style>
 </head>
 <body>
 
-<div class="container">
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+    <div class="splashBox" id="splashBox">
+        <h1>SECTION 2</h1>
+        <p>Answer the questions as follows.</p>
+        <p>The timer re-sets on each question.</p>
+        <button id="startBtn">NEXT</button>
+    </div>
+</div>
+
+<!-- QUIZ -->
+<div class="container" id="quizContainer">
     <div id="timer"></div>
     <h1 id="questionText"></h1>
     <div id="options"></div>
-
     <button id="submitBtn">Submit</button>
-</div>
-
-<!-- TIME UP OVERLAY -->
-<div id="timeUpOverlay">
-    <div id="timeUpBox">
-        <h1>TIME UP</h1>
-    </div>
 </div>
 
 <script>
@@ -182,11 +139,21 @@
 
     let index = 0;
     let selectedAnswer = null;
-
-    // Adaptive timer begins at 10 seconds
     let nextTimeLimit = 10;
     let timeLeft;
     let countdown;
+
+    /* SHOW BOX AFTER 2 SECONDS */
+    setTimeout(() => {
+        document.getElementById('splashBox').style.opacity = 1;
+    }, 2000);
+
+    /* CLICK NEXT TO START QUIZ */
+    document.getElementById('startBtn').onclick = () => {
+        document.getElementById('splashScreen').style.display = 'none';
+        document.getElementById('quizContainer').style.display = 'block';
+        loadQuestion();
+    };
 
     function loadQuestion() {
         const q = sectionOneQuestions[index];
@@ -207,7 +174,6 @@
                 document.querySelectorAll(".optionBtn").forEach(b => b.classList.remove("selected"));
                 btn.classList.add("selected");
                 selectedAnswer = option;
-
                 document.getElementById("submitBtn").classList.add("enabled");
             };
 
@@ -228,24 +194,13 @@
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                showTimeUp();
+                nextQuestion();
             }
         }, 1000);
     }
 
     function updateTimerDisplay() {
-        const timer = document.getElementById("timer");
-        timer.textContent = `Time Left: ${timeLeft}s`;
-    }
-
-    function showTimeUp() {
-        const overlay = document.getElementById("timeUpOverlay");
-        overlay.style.display = "flex";
-
-        setTimeout(() => {
-            overlay.style.display = "none";
-            nextQuestion();
-        }, 900);
+        document.getElementById("timer").textContent = `Time Left: ${timeLeft}s`;
     }
 
     document.getElementById("submitBtn").onclick = () => {
@@ -262,17 +217,13 @@
 
     function nextQuestion() {
         index++;
-
         if (index < sectionOneQuestions.length) {
             loadQuestion();
         } else {
-            window.location.href = "https://apfthomas-cpu.github.io/cranium_gymnasium_algebra/";
+            alert("Section complete!");
         }
     }
-
-    loadQuestion();
 </script>
 
 </body>
 </html>
-
