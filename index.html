@@ -8,6 +8,7 @@
 
 <style>
     * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+
     body {
         margin: 0;
         background: url('Background.jpg') no-repeat center center fixed;
@@ -15,18 +16,17 @@
         min-height: 100vh;
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         padding: 20px;
-
     }
 
-    /* Fade Animations */
+    /* Fade animations */
     .fade-in { animation: fadeIn 0.6s ease forwards; }
     .fade-out { animation: fadeOut 0.6s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
-    @keyframes fadeOut { from { opacity: 1;} to { opacity: 0;} }
-
+    /* Splash screen */
     #splashScreen {
         position: fixed;
         inset: 0;
@@ -38,17 +38,14 @@
         z-index: 9999;
         padding: 20px;
     }
-
     .splashBox {
         background: rgba(255,255,255,0.5);
         backdrop-filter: blur(8px);
         padding: 40px 60px;
         border-radius: 20px;
         text-align: center;
-        box-shadow: 0 0 20px rgba(0,0,0,0.2);
         opacity: 0;
         transition: opacity 1s ease;
-        max-width: 90%;
     }
 
     #startBtn {
@@ -56,22 +53,14 @@
         padding: 15px 35px;
         font-size: 20px;
         border: none;
-        cursor: pointer;
         border-radius: 12px;
         background: rgba(0,0,0,0.45);
         color: white;
+        cursor: pointer;
         transition: 0.3s ease;
     }
-    #startBtn:hover { background: rgba(0,0,0,0.7); }
 
-    /* QUIZ */
-    #timer {
-        font-size: 32px;
-        font-weight: 800;
-        color: red;
-        text-align: center;
-        margin-bottom: 10px;
-    }
+    /* Quiz container */
     .container {
         display: none;
         width: 90%;
@@ -80,174 +69,94 @@
         backdrop-filter: blur(8px);
         padding: 40px;
         border-radius: 20px;
-        display: flex;
         flex-direction: column;
         gap: 20px;
         opacity: 0;
     }
 
-    #questionArea {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        width: 100%;
-        justify-items: center;
+    #timer {
+        font-size: 32px;
+        font-weight: 800;
+        color: red;
+        text-align: center;
     }
 
     #options {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 15px;
-        width: 100%;
         max-width: 600px;
-    }
-
-    @media(max-width:600px){
-    /* Fix background jitter + remove fixed positioning issues */
-    body {
-        align-items:flex-start;
-        padding: 0;
-        margin: 0;
-        background-attachment: scroll;
-        height: auto;
-        min-height: 100vh;
-    }
-
-    /* Perfect centered quiz spacing */
-    .container {
-        margin-top: 60px !important;
-        padding: 24px !important;
-        width: 100% !important;
-        border-radius: 18px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    /* Timer – large + centered */
-    #timer {
-        font-size: 30px !important;
-        font-weight: 900 !important;
-        text-align: center !important;
-        margin-top: 0 !important;
-        margin-bottom: 10px !important;
-    }
-
-    /* Question text – resize for phones */
-    #questionText {
-        font-size: 22px !important;
-        line-height: 1.4 !important;
-        text-align: center !important;
-        padding: 0 10px;
-    }
-
-    /* Options – single column, large tap targets */
-    #options {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-        width: 100% !important;
-    }
-
-    .optionBtn {
-        font-size: 20px !important;
-        padding: 16px !important;
-        width: 100% !important;
-        border-radius: 14px !important;
-    }
-
-    #submitBtn {
-        font-size: 20px !important;
-        padding: 14px !important;
-        width: 100% !important;
-        margin-top: 10px !important;
-        border-radius: 14px !important;
-    }
-
-    /* Splash screen spacing */
-    #splashScreen {
-        padding: 20px !important;
-        background-attachment: scroll !important;
-        display: flex;
-        align-items: center;
-    }
-
-    .splashBox {
-        padding: 24px !important;
-        width: 100% !important;
-        max-width: 380px !important;
-        border-radius: 18px !important;
-    }
-}
-    .container {
-        margin-top:20px !important;
-        padding:20px !important;
-        width:100% !important;
-        border-radius:15px !important;
-    }
-    #questionText {
-        font-size:20px !important;
-        text-align:center;
-    }
-    .optionBtn {
-        font-size:18px !important;
-        padding:12px !important;
-        width:100% !important;
-    }
-    #submitBtn {
-        font-size:18px !important;
-        padding:12px !important;
-        width:100% !important;
-    }
-    #timer {
-        font-size:28px !important;
-        margin-top:10px !important;
-    }
-}
+        margin: auto;
     }
 
     .optionBtn {
         padding: 15px;
         font-size: 20px;
-        background: white;
-        border: none;
         border-radius: 12px;
+        border: none;
+        background: white;
         box-shadow: 0 0 6px rgba(0,0,0,0.15);
         cursor: pointer;
         transition: 0.3s ease;
     }
-    .optionBtn.selected { background:#2d2d2d;color:white;transform:scale(1.05); }
+    .optionBtn.selected { background: #2d2d2d; color: white; }
 
     #submitBtn {
         padding: 15px;
         font-size: 22px;
-        background-color:#2d2d2d;color:white;border:none;border-radius:10px;
-        cursor:pointer;
-        opacity:0.6;pointer-events:none;
-        transition:0.3s ease;
-        max-width:300px;
-        margin:auto;
+        border-radius: 10px;
+        background: #2d2d2d;
+        color: white;
+        opacity: 0.6;
+        pointer-events: none;
+        max-width: 300px;
+        margin: auto;
     }
-    #submitBtn.enabled { opacity:1;pointer-events:auto; }
+    #submitBtn.enabled { opacity: 1; pointer-events: auto; }
+
+    /* END SCREEN */
+    #endScreen {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: url('Background.jpg') no-repeat center center fixed;
+        background-size: cover;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+    }
+    #endScreen.visible { opacity: 1; }
+
+    .endBox {
+        background: rgba(255,255,255,0.55);
+        padding: 40px 60px;
+        border-radius: 20px;
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #nextBtn {
+        padding: 15px 35px;
+        font-size: 22px;
+        background: rgba(0,0,0,0.45);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
 
-<style>
-/* Override layout for better vertical centering */
-body { display:flex; justify-content:center; align-items:center; padding:20px; }
-
-/* Mobile optimisation: bring quiz lower + avoid fixed background jitter */
-@media(max-width:600px){
-    body { align-items:flex-start; padding-top:40px; background-attachment:scroll; }
-    .container { margin-top:20px !important; }
-    #splashScreen { background-attachment:scroll !important; padding-top:40px; }
-}
-</style>
-
-<!-- SPLASH SCREEN -->
+<!-- SPLASH -->
 <div id="splashScreen">
     <div class="splashBox" id="splashBox">
         <h1>SECTION 2</h1>
-        <p>Answer the questions as follows.</p>
-        <p>The timer re-sets on each question.</p>
+        <p>Answer the questions that follow.</p>
+        <p>Read carefully – think quickly.</p>
         <button id="startBtn">NEXT</button>
     </div>
 </div>
@@ -255,106 +164,133 @@ body { display:flex; justify-content:center; align-items:center; padding:20px; }
 <!-- QUIZ -->
 <div class="container" id="quizContainer">
     <div id="timer"></div>
-
-    <div id="questionArea">
-        <h1 id="questionText"></h1>
-        <div id="options"></div>
-    </div>
-
+    <h1 id="questionText"></h1>
+    <div id="options"></div>
     <button id="submitBtn">Submit</button>
 </div>
 
+<!-- END SCREEN -->
+<div id="endScreen">
+    <div class="endBox">You have reached the end of this section.</div>
+    <button id="nextBtn">Next</button>
+</div>
+
 <script>
-const sectionOneQuestions=[
- {text:"William Shakespeare was half English, half Scottish and half Italian.",options:["True","False"]},
- {text:"1kg of feathers weighs the same amount as 1kg of granite.",options:["True","False"]},
- {text:"The Great Wall of China is visible from space with the naked eye.",options:["True","False"]},
- {text:"The highest capital city in Europe is Madrid.",options:["True","False"]},
- {text:"Light travels faster than sound.",options:["True","False"]},
- {text:"You are not a pupil at St Philip's.",options:["True","False"]},
- {text:"The human body has four lungs.",options:["True","False"]}
+const questions = [
+ {text:"William Shakespeare was half English, half Scottish and half Italian.",options:["True","False"],answer:"False"},
+ {text:"1kg of feathers weighs the same amount as 1kg of granite.",options:["True","False"],answer:"True"},
+ {text:"The Prime Minister is the Head of State within the United Kingdom.",options:["True","False"],answer:"False"},
+ {text:"Air pressure increases as altitude increases.",options:["True","False"],answer:"False"},
+ {text:"Light travels faster than sound.",options:["True","False"],answer:"True"},
+ {text:"You are not a pupil at St Philip's.",options:["True","False"],answer:"False"},
+ {text:"Water evaporates as it cools down.",options:["True","False"],answer:"False"},
+ {text:"A dodecahedron is a shape with 13 sides.",options:["True","False"],answer:"False"},
+ {text:"The plural of 'octopus' is 'octopi'.",options:["True","False"],answer:"False"},
+ {text:"It is impossible to see through an opaque surface.",options:["True","False"],answer:"True"}
 ];
-const correctAnswers=["False","True","False","True","True","False","False"];
-let index=0,selectedAnswer=null,nextTimeLimit=10,timeLeft,countdown;
 
-setTimeout(()=>{document.getElementById('splashBox').style.opacity=1;},2000);
+let index = 0;
+let selected = null;
+let timeLimit = 7;
+let timeLeft = timeLimit;
+let countdown;
 
-document.getElementById('startBtn').onclick=()=>{
- document.getElementById('splashScreen').classList.add('fade-out');
- setTimeout(()=>{
-     document.getElementById('splashScreen').style.display='none';
-     const quiz=document.getElementById('quizContainer');
-     quiz.style.display='flex';
-     quiz.classList.add('fade-in');
-     loadQuestion();
- },500);
+setTimeout(() => document.getElementById("splashBox").style.opacity = 1, 1000);
+
+document.getElementById("startBtn").onclick = () => {
+    document.getElementById("splashScreen").classList.add("fade-out");
+    setTimeout(() => {
+        document.getElementById("splashScreen").style.display = "none";
+        const q = document.getElementById("quizContainer");
+        q.style.display = "flex";
+        q.classList.add("fade-in");
+        loadQuestion();
+    }, 400);
 };
 
-function loadQuestion(){
- const q=sectionOneQuestions[index];
- const question=document.getElementById('questionText');
- const optionsDiv=document.getElementById('options');
+function loadQuestion() {
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.text;
 
- question.classList.remove('fade-in');
- void question.offsetWidth;
- question.textContent=q.text;
- question.classList.add('fade-in');
+    const optDiv = document.getElementById("options");
+    optDiv.innerHTML = "";
+    selected = null;
 
- optionsDiv.innerHTML="";
- selectedAnswer=null;
- document.getElementById('submitBtn').classList.remove('enabled');
+    document.getElementById("submitBtn").classList.remove("enabled");
 
- q.options.forEach(option=>{
-     const btn=document.createElement('button');
-     btn.className='optionBtn';
-     btn.textContent=option;
-     btn.onclick=()=>{
-         document.querySelectorAll('.optionBtn').forEach(b=>b.classList.remove('selected'));
-         btn.classList.add('selected');
-         selectedAnswer=option;
-         document.getElementById('submitBtn').classList.add('enabled');
-     };
-     optionsDiv.appendChild(btn);
- });
- startTimer();
+    q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "optionBtn";
+        btn.textContent = opt;
+        btn.onclick = () => {
+            document.querySelectorAll(".optionBtn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            selected = opt;
+            document.getElementById("submitBtn").classList.add("enabled");
+        };
+        optDiv.appendChild(btn);
+    });
+
+    startTimer();
 }
 
-function startTimer(){
- timeLeft=nextTimeLimit;
- updateTimerDisplay();
- clearInterval(countdown);
- countdown=setInterval(()=>{
-     timeLeft--;
-     updateTimerDisplay();
-     if(timeLeft<=0){clearInterval(countdown);nextQuestion();}
- },1000);
+function startTimer() {
+    timeLeft = timeLimit;
+    updateTimer();
+
+    clearInterval(countdown);
+    countdown = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            nextQuestion();
+        }
+    }, 1000);
 }
 
-function updateTimerDisplay(){document.getElementById('timer').textContent=`Time Left: ${timeLeft}s`;}
+function updateTimer() {
+    document.getElementById("timer").textContent = `Time Left: ${timeLeft}s`;
+}
 
-document.getElementById('submitBtn').onclick=()=>{
- if(!selectedAnswer)return;
- clearInterval(countdown);
- if(selectedAnswer===correctAnswers[index])nextTimeLimit=Math.max(1,nextTimeLimit-2);
- nextQuestion();
+document.getElementById("submitBtn").onclick = () => {
+    if (!selected) return;
+
+    clearInterval(countdown);
+
+    if (selected === questions[index].answer) {
+        timeLimit = Math.max(3, timeLimit - 2);
+    }
+
+    nextQuestion();
 };
 
-function nextQuestion(){
- const container=document.getElementById('quizContainer');
- container.classList.remove('fade-in');
- container.classList.add('fade-out');
+function nextQuestion() {
+    index++;
 
- setTimeout(()=>{
-     index++;
-     if(index<sectionOneQuestions.length){
-         container.classList.remove('fade-out');
-         container.classList.add('fade-in');
-         loadQuestion();
-     } else{
-         window.location.href="https://apfthomas-cpu.github.io/cranium_gymnasium_algebra/";
-     }
- },500);
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        endSection();
+    }
 }
+
+function endSection() {
+    const quiz = document.getElementById("quizContainer");
+    quiz.style.display = "none";
+
+    const end = document.getElementById("endScreen");
+    end.style.display = "flex";
+
+    requestAnimationFrame(() => {
+        end.classList.add("visible");
+    });
+}
+
+document.getElementById("nextBtn").onclick = () => {
+    window.location.href = "https://apfthomas-cpu.github.io/cranium_gymnasium_algebra/";
+};
 </script>
 
 </body>
